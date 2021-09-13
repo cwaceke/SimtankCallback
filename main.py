@@ -24,6 +24,12 @@ class Data(db.Model):
     def __repr__ (self):
         return "(%s, %s, %s, %s, %s, %s)" % (self.device_id , self.time, self.data, self.battery, self.location, self.level)
 
+def getDate():
+    now_date=datetime.now().astimezone()
+    d= now_date.strftime("%m/%d/%y, %H:%M")
+    return d
+
+
 def locationPin (testString):
     polarityHex=testString[2:4]
     polarityInt=int(polarityHex, base=16)
@@ -95,7 +101,7 @@ def confirmation():
     #time_rough=int(content['time'])
     device_id=content['id']
     dataString=content['data']
-    #time = datetime.fromtimestamp(time_rough).strftime('%Y-%m-%d %H:%M')
+    time = getDate()
     typeHex=dataString[:2]
     if (typeHex=="1f"):
     #getting the polarity
