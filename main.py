@@ -14,7 +14,7 @@ db=SQLAlchemy(app)
 class Data(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     device_id=db.Column(db.String(50))
-    time=db.Column(db.DateTime, default=datetime.utcnow)
+    time=db.Column(db.String(50))
     data=db.Column(db.String(50),nullable=False)
     battery=db.Column(db.Integer,nullable=False)
     location=db.Column(db.String(60))
@@ -110,21 +110,21 @@ def confirmation():
         deviceBat=battery(dataString)
         deviceLoc=deviceLat+" "+deviceLong
 
-        new_data=Data(device_id=device_id, data=dataString, battery=deviceBat,location=deviceLoc)
+        new_data=Data(device_id=device_id, time=time, data=dataString, battery=deviceBat,location=deviceLoc)
 
     elif (typeHex=="2f"):
         waterLevel=level(dataString)
         deviceBat=battery(dataString)
-        new_data=Data(device_id=device_id, data=dataString, battery=deviceBat,level=waterLevel)
+        new_data=Data(device_id=device_id, time=time,data=dataString, battery=deviceBat,level=waterLevel)
        
     elif (typeHex=="4f"):
         waterLevel=level(dataString)
         deviceBat=battery(dataString)
-        new_data=Data(device_id=device_id, data=dataString, battery=deviceBat,level=waterLevel)
+        new_data=Data(device_id=device_id, time=time,data=dataString, battery=deviceBat,level=waterLevel)
         
     else:
         deviceBat=battery(dataString)
-        new_data=Data(device_id=device_id, data=dataString, battery=deviceBat)
+        new_data=Data(device_id=device_id, time=time, data=dataString, battery=deviceBat)
 
 
     file=open('confirm.json','a')
@@ -132,6 +132,7 @@ def confirmation():
     file.close()
     db.session.add(new_data)
     db.session.commit()
+    print (new_data)
     return ('', 200)
     
 
