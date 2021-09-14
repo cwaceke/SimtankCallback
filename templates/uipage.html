@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-2">
+        One of three columns
+      </div>
+      <div class="col-2">
+        <table id="data" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Device ID</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for dataa in data %}
+            <tr>
+                <td><a href="{{url_for('device', device_id=dataa.device_id)}}">{{ dataa.device_id}}</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+ 
+ 
+        </table>
+      </div>
+      <div class="col-8">
+        One of three columns
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+{% block scripts %} 
+    <script>
+      $(document).ready( function () {
+        $('#data').DataTable({
+            columns:[
+                null,
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable:false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false}]
+        });
+      });
+    </script>
+{% endblock %}

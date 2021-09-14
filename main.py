@@ -1,4 +1,5 @@
 # rahog52419@rerunway.com,whereWasGondor
+
 from flask import Flask, request, render_template
 from datetime import datetime
 import json
@@ -12,6 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///test.db'
 db=SQLAlchemy(app)
 
 class Data(db.Model):
+
     id=db.Column(db.Integer, primary_key=True)
     device_id=db.Column(db.String(50))
     time=db.Column(db.String(50))
@@ -21,8 +23,16 @@ class Data(db.Model):
     level=db.Column(db.Integer)
 
     
-    def __repr__ (self):
-        return "(%s, %s, %s, %s, %s, %s)" % (self.device_id , self.time, self.data, self.battery, self.location, self.level)
+    def to_dict(self):
+        return {
+            'device_id':self.device_id , 
+            'time':self.time, 
+            'data':self.data, 
+            'battery':self.battery, 
+            'location':self.location, 
+            'level':self.level
+        }
+db.create_all()
 
 def getDate():
     now_date=datetime.now().astimezone()
@@ -78,27 +88,27 @@ def level (testString):
     levelInt=int(levelhex, base=16)
     return levelInt
 
-ROWS_PER_PAGE=20
-@app.route('/', methods=['GET', 'POST'], defaults={"page_num": 1})
-@app.route('/<int:page_num>',methods=['GET', 'POST'])
-def index(page_num):
-    
-    data=Data.query.order_by(Data.device_id.asc()).paginate(page=page_num, per_page=ROWS_PER_PAGE, error_out=False)
-    if request.method == 'POST' and 'tag' in request.form:
-       tag = request.form["tag"]
-       search = "%{}%".format(tag)
-       data=Data.query.filter(Data.device_id.like(search)).paginate(page=page_num, per_page=ROWS_PER_PAGE,error_out=True)
-       return render_template('index.html', data=data, tag=tag)
-    return render_template('index.html', data=data)
+@app.route('/')
+def index():
+    data=Data.query
+    return(render_template('index.html', data=data))
+
+@app.route('/uipage')
+def uipage():
+    data=Data.query
+    return(render_template('uipage.html', data=data))
 
 
+@app.route('/device/<device_id>')
+def device(device_id):
+    data=Data.query.filter_by(device_id=device_id).all()
 
+    return render_template('device.html', data=data)   
 
 @app.route('/confirmation', methods=['POST'])
 def confirmation():
     
     content=request.json #grab the json data
-    #time_rough=int(content['time'])
     device_id=content['id']
     dataString=content['data']
     time = getDate()
@@ -109,6 +119,9 @@ def confirmation():
         deviceLat, deviceLong=locationPin(dataString)
         deviceBat=battery(dataString)
         deviceLoc=deviceLat+" "+deviceLong
+        #previous=Data.select().order_by(Data.time.desc()).filter_by(Data.device_id==device_id)
+        #print (previous)
+        #previous_level=previous.device_id
 
         new_data=Data(device_id=device_id, time=time, data=dataString, battery=deviceBat,location=deviceLoc)
 

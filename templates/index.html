@@ -1,68 +1,55 @@
 {% extends 'base.html' %}
 
-{% block head %}
 
-{% endblock %}
-
-{% block body %}
+{% block content %}
 <div class="content">
     <div class="row">
-        <div class="col-8">
-        <strong>Search For :{{tag}}</strong>
-        </div>
-        <div class="col-4">
-         <form action="" method="post" autocomplete="off"> 
-         <div class="row">
-          <div class="col-6">
-          <input type="text" class="form-control" name="tag" id="tag"  placeholder="Enter device ID"/> 
-          </div>
-          <div class="col-6" align="left">
-          <input type="submit" value="Search" class="form-control btn btn-primary " name=""> 
-          </div>
-         </form> 
-         </div>
-        </div>
-       </div> 
     <h1 style="text-align: center">SIMTANK</h1>
 
         <h4 style="text-align: center">Here are the online devices</h4>
-        <table class="table table-striped table-sm">
-            <tr>
-                <th>Device ID</th>
-                <th>Time</th>
-                <th>Data sent</th>
-                <th>Location</th>
-                <th>Water Level</th>
-                <th>Battery %</th>
-                
-            </tr>
-            {% for dataa in data.items %}
+        <table id="data" class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ dataa.device_id }}</td>
-                    <td>{{ dataa.time }}</td>
-                    <td>{{ dataa.data }}</td>
-                    <td>{{ dataa.location}}</td>
-                    <td>{{ dataa.level}}</td>
-                    <td>{{ dataa.battery}}</td>
+                    <th>Device ID</th>
+                    <th>Time</th>
+                    <th>Data sent</th>
+                    <th>Location</th>
+                    <th>Water Level</th>
+                    <th>Battery %</th>
                     
                 </tr>
+
+            </thead>
+            <tbody>
+            {% for dataa in data %}
+            <tr>
+                <td><a href="{{url_for('device', device_id=dataa.device_id)}}">{{ dataa.device_id}}</a></td>
+                <td>{{ dataa.time}}</td>
+                <td>{{ dataa.data }}</td>
+                <td>{{ dataa.location }}</td>
+                <td>{{ dataa.level }}</td>
+                <td>{{dataa.battery}}</td>
+            </tr>
             {% endfor %}
+            </tbody>
+ 
+ 
         </table>
-        {% for page in data.iter_pages(left_edge=5, right_edge=5, left_current=5, right_current=5) %}
-
-        {% if page %}
-            {% if data.page == page_num %}
-                <a class="btn btn-info mb-4" href="{{ url_for('index', page_num=page) }}">{{ page }}</a>
-            {% else %}
-                <a class="btn btn-outline-info mb-4" href="{{ url_for('index', page_num=page) }}">{{ page}}</a>
-            {% endif %}
-          
-        {% else %}
-          ...
-        {% endif %}
-
-      {% endfor %}
-  
-
+    </div>
 </div>
+{% endblock %}
+{% block scripts %} 
+    <script>
+      $(document).ready( function () {
+        $('#data').DataTable({
+            columns:[
+                null,
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable:false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false}]
+        });
+      });
+    </script>
 {% endblock %}

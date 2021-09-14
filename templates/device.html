@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="content">
+    <div class="row">
+    <h1 style="text-align: center">SIMTANK</h1>
+
+        <h4 style="text-align: center">Here are the online devices</h4>
+        <table id="data" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Device ID</th>
+                    <th>Time</th>
+                    <th>Data sent</th>
+                    <th>Location</th>
+                    <th>Water Level</th>
+                    <th>Battery %</th>
+                    
+                </tr>
+
+            </thead>
+            <tbody>
+           
+            {% for dataa in data %}
+                <tr>
+                    <td>{{ dataa.device_id}}</td>
+                    <td>{{ dataa.time}}</td>
+                    <td>{{ dataa.data }}</td>
+                    <td>{{ dataa.location }}</td>
+                    <td>{{ dataa.level }}</td>
+                    <td>{{dataa.battery}}</td>
+                </tr>
+            {% endfor %}
+     
+            </tbody>
+ 
+ 
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %} 
+    <script>
+      $(document).ready( function () {
+        $('#data').DataTable({
+            columns:[
+                null,
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable:false},
+                {orderable:false, searchable: false},
+                {orderable:false, searchable: false}]
+        });
+      });
+    </script>
+{% endblock %}
